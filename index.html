@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Mood Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center">
+    <div class="w-full max-w-xl p-6 bg-gray-800 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center fade-in">Mood Detection</h1>
+        <div class="mb-4">
+            <input type="text" id="moodInput" placeholder="How are you feeling?" class="w-full p-3 rounded bg-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <button id="submitMood" class="w-full p-3 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition-colors fade-in">Get Suggestions</button>
+
+        <div id="suggestions" class="hidden mt-6 fade-in">
+            <h2 class="text-xl font-semibold mb-4">Detected Mood: <span id="detectedMood" class="text-indigo-400"></span></h2>
+            <div class="mb-6">
+                <h3 class="text-lg font-medium mb-2">Music Suggestion:</h3>
+                <iframe id="spotifyPlayer" class="spotify-player w-full rounded shadow" src="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+            </div>
+            <div>
+                <h3 class="text-lg font-medium mb-2">Video Suggestion:</h3>
+                <p id="videoSuggestion" class="text-indigo-400"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const moodKeywords = {
+            "sad": ["sad", "unhappy", "down", "melancholy", "blue"],
+            "anxious": ["anxious", "nervous", "worried", "tense", "uneasy"],
+            "tired": ["tired", "exhausted", "drained", "sleepy", "weary"],
+            "happy": ["happy", "joyful", "cheerful", "content", "pleased"],
+            "stressed": ["stressed", "overwhelmed", "pressured", "tense", "frazzled"],
+            "relaxed": ["relaxed", "calm", "peaceful", "chilled", "serene"],
+            "excited": ["excited", "thrilled", "elated", "eager", "ecstatic"]
+        };
+
+        const spotifyEmbedUris = {
+            "sad": "https://open.spotify.com/embed/album/2N1ab00YnjAe9TBxtg7YGx",
+            "anxious": "https://open.spotify.com/embed/playlist/0eU3ubPAnqeSMi9K3YKVpC",
+            "tired": "https://open.spotify.com/embed/album/3LPtPgP1veXoKEuPzHjtOY",
+            "happy": "https://open.spotify.com/embed/playlist/37i9dQZF1E4wSqZ5Zcfoee",
+            "stressed": "https://open.spotify.com/embed/playlist/37i9dQZF1DX3EbcelyrZPd",
+            "relaxed": "https://open.spotify.com/embed/playlist/37i9dQZF1DX4WYpdgoIcn6",
+            "excited": "https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC"
+        };
+
+        const youtubeSuggestions = {
+            "sad": "https://youtu.be/b4pP6HyXRMI?si=1eb-sqrDPhhKAUvX",
+            "anxious": "https://youtu.be/mKW4ZFP8bGY?si=IOUqV4q0v4Kyh5Ay",
+            "tired": "https://youtu.be/w5XCvxI0Tjk?si=2xHvOfY8pu_labrF",
+            "happy": "https://youtu.be/r4ZdyS6v3qA?si=dVtPcZfKV6-E_Xll",
+            "stressed": "https://youtu.be/zYGvpsf6Da8?si=w5zHBxqRZsfBT97r",
+            "relaxed": "https://youtu.be/3-y40Bzm4yo?si=xxCGvF9rUrOralO3",
+            "excited": "https://youtu.be/4fndeDfaWCg?si=3nLdgn_mE8LkNRHG"
+        };
+
+        document.getElementById("submitMood").addEventListener("click", function () {
+            const moodInput = document.getElementById("moodInput").value.toLowerCase().trim();
+            let detectedMood = "general";
+
+            for (let mood in moodKeywords) {
+                if (moodKeywords[mood].some(keyword => moodInput.includes(keyword))) {
+                    detectedMood = mood;
+                    break;
+                }
+            }
+
+            document.getElementById("detectedMood").innerText = detectedMood.charAt(0).toUpperCase() + detectedMood.slice(1);
+
+            const spotifyUri = spotifyEmbedUris[detectedMood] || "https://open.spotify.com/embed/playlist/37i9dQZF1DX6sHwck3IBzT";
+            document.getElementById("spotifyPlayer").src = spotifyUri;
+
+            const videoLink = youtubeSuggestions[detectedMood] || "https://youtu.be/tbnzAVRZ9Xc?si=q929XxieZ4rxxeyi";
+            document.getElementById("videoSuggestion").innerHTML = `<a href="${videoLink}" target="_blank" class="text-indigo-400 hover:underline">Click here for video suggestion</a>`;
+
+            document.getElementById("suggestions").classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>
+
